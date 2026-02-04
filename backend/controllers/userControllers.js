@@ -148,14 +148,13 @@ const deleteUser = async(req,res)=>{
 
 const crypto = require("crypto")
 
-// ================= FORGOT PASSWORD =================
-
+// !forgot password
 // send reset otp
-const forgotPassword = async (req, res) => {
+const forgotPassword = async (req,res)=>{
   try {
-    const { email } = req.body
+    const {email} = req.body
 
-    const user = await UserModel.findOne({ email })
+    const user = await UserModel.findOne({email})
     if (!user) {
       return res.status(404).json({ message: "Email not registered" })
     }
@@ -163,7 +162,7 @@ const forgotPassword = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
 
     user.resetOtp = otp
-    user.resetOtpExpire = Date.now() + 10 * 60 * 1000 // 10 min
+    user.resetOtpExpire = Date.now() + 5 * 60 * 1000 
     await user.save()
 
     emailSend(
@@ -172,26 +171,22 @@ const forgotPassword = async (req, res) => {
       `Your OTP for password reset is: ${otp}`
     )
 
-    res.status(200).json({ message: "OTP sent to email" })
+    res.status(200).json({message: "OTP sent to email"})
   } catch (error) {
     console.log(error)
-    res.status(500).json({ message: "Server error" })
+    res.status(500).json({message: "Server error"})
   }
 }
 
 // reset password
-const resetPassword = async (req, res) => {
+const resetPassword = async (req,res)=>{
   try {
-    const { email, otp, newPassword } = req.body
+    const {email, otp, newPassword} = req.body
 
-    const user = await UserModel.findOne({
-      email,
-      resetOtp: otp,
-      resetOtpExpire: { $gt: Date.now() }
-    })
+    const user = await UserModel.findOne({email,resetOtp: otp,resetOtpExpire: {$gt: Date.now()}})
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid or expired OTP" })
+      return res.status(400).json({message:"Invalid or expired OTP"})
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10)
@@ -201,16 +196,16 @@ const resetPassword = async (req, res) => {
     user.resetOtpExpire = undefined
     await user.save()
 
-    res.status(200).json({ message: "Password reset successful" })
+    res.status(200).json({message:"Password reset successful"})
   } catch (error) {
     console.log(error)
-    res.status(500).json({ message: "Server error" })
+    res.status(500).json({message:"Server error"})
   }
 }
 
 
 
-module.exports = {
+module.exports ={
   testApi,
   getAllUsers,
   register,

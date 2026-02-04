@@ -26,11 +26,11 @@ const ResetPassword = () => {
       <div className="w-full max-w-md bg-green-800 border border-slate-700 rounded-2xl shadow-xl p-8">
 
         <h2 className="text-3xl font-bold text-center text-white mb-4">
-          Reset Password
+            Reset Password
         </h2>
 
         <p className="text-sm text-center text-slate-400 mb-6">
-          Enter OTP sent to your email and your new password.
+            Enter OTP sent to your email and your new password.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
