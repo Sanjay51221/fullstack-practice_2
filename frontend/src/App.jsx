@@ -8,6 +8,7 @@ import DashboardLayout from "./component/dashboard/layout/DashboardLayout";
 import DashboardHome from "./component/dashboard/DashboardHome";
 import UpdateProfile from "./component/dashboard/UpdateProfile";
 import ForgotPassword from "./component/pages/ForgotPassword";
+import ResetPassword from "./component/pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path:"/forgotPassword",
         element:<ForgotPassword/>
+      },
+      {
+        path:"reset-password",
+        element:<ResetPassword/>
       },
       {
         path: "/dashboardHome",

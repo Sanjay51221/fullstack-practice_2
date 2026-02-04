@@ -66,15 +66,24 @@ const login = async(req,res)=>{
   try {
     const { email, password } = req.body
 
-    const user = await UserModel.findOne({ email: email.toLowerCase() })
+    const user = await UserModel.findOne({email:email.toLowerCase()})
     if (!user){
       return res.status(404).json({ message: "Email not found" })
     }
 
     const matchPassword = await bcrypt.compare(password, user.password)
     if (!matchPassword){
-      return res.status(401).json({ message: "Incorrect password" })
+      return res.status(401).json({message:"Incorrect password"})
     }
+
+    //     emailSend(
+    //   email,
+    //   "Welcome to Our Platform",
+    //   `Hello ${username},
+    //    You are successfully logedin`
+    // )
+
+    // console.log(email)
 
     res.status(200).json({
       message: "Login successful",
@@ -137,6 +146,70 @@ const deleteUser = async(req,res)=>{
   }
 }
 
+const crypto = require("crypto")
+
+// ================= FORGOT PASSWORD =================
+
+// send reset otp
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body
+
+    const user = await UserModel.findOne({ email })
+    if (!user) {
+      return res.status(404).json({ message: "Email not registered" })
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+
+    user.resetOtp = otp
+    user.resetOtpExpire = Date.now() + 10 * 60 * 1000 // 10 min
+    await user.save()
+
+    emailSend(
+      email,
+      "Password Reset OTP",
+      `Your OTP for password reset is: ${otp}`
+    )
+
+    res.status(200).json({ message: "OTP sent to email" })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "Server error" })
+  }
+}
+
+// reset password
+const resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body
+
+    const user = await UserModel.findOne({
+      email,
+      resetOtp: otp,
+      resetOtpExpire: { $gt: Date.now() }
+    })
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired OTP" })
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+    user.password = hashedPassword
+    user.resetOtp = undefined
+    user.resetOtpExpire = undefined
+    await user.save()
+
+    res.status(200).json({ message: "Password reset successful" })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "Server error" })
+  }
+}
+
+
+
 module.exports = {
   testApi,
   getAllUsers,
@@ -144,5 +217,7 @@ module.exports = {
   login,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  forgotPassword,
+  resetPassword
 }

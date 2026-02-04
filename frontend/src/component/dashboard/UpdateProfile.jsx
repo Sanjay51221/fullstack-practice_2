@@ -54,6 +54,7 @@ const UpdateProfile = ()=>{
       const {data} = await axios.put(`http://localhost:9090/update/${userId}`,form)
 
       alert(data.message)
+      navigate("/dashboardHome")
     } catch (error) {
       console.log(error)
       alert("Update failed")

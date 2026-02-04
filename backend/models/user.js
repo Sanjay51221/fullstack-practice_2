@@ -8,7 +8,9 @@ const userSchema = new mongoose.Schema({
     password: String,
     imageUrl:String,
     gender: String,
-    city:String
+    city:String,
+    resetOtp: String,
+    resetOtpExpire: Date,
 })
 
 const UserModel = mongoose.model("users", userSchema)

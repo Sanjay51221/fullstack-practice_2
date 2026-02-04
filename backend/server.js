@@ -170,7 +170,9 @@ const {
   login,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  forgotPassword,
+  resetPassword
 } = require("./controllers/userControllers.js")
 
 const {authorizetion} = require("./middleware/authermiddleware.js")
@@ -189,6 +191,8 @@ app.post("/login",authorizetion, login)
 app.get("/user/:id", getUserById)
 app.put("/update/:id", updateUser)
 app.delete("/delete/:id", deleteUser)
+app.post("/forgot-password", forgotPassword)
+app.post("/reset-password", resetPassword)
 
 app.listen(process.env.PORT, () => {
   console.log(`http://localhost:${process.env.PORT} Server running...`)
